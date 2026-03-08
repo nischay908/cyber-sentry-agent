@@ -21,7 +21,7 @@ const Navbar = () => {
             <Shield className="w-4 h-4 text-primary-foreground" />
           </div>
           <span className="font-display font-bold text-base tracking-tight">
-            <span className="gradient-text">Red Team</span>
+            <span className="gradient-text">VulnHunter</span>
           </span>
         </Link>
 

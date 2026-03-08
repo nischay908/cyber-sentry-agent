@@ -61,7 +61,7 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
           {phase >= 1 && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <h1 className="text-5xl md:text-6xl font-display font-bold tracking-tight">
-                <span className="gradient-text">Red Team</span>
+                <span className="gradient-text">VulnHunter</span>
               </h1>
               <motion.p
                 className="text-xl md:text-2xl font-display text-muted-foreground mt-2 tracking-wide"
@@ -69,7 +69,7 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                Cyber-Sentry
+                Autonomous Security Agent
               </motion.p>
             </motion.div>
           )}

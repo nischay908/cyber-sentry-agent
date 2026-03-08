@@ -72,7 +72,7 @@ const Dashboard = () => {
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary to-secondary">
                   <Shield className="w-4 h-4 text-primary-foreground" />
                 </div>
-                <span className="font-display font-bold text-sm gradient-text hidden sm:inline">Red Team</span>
+                <span className="font-display font-bold text-sm gradient-text hidden sm:inline">VulnHunter</span>
               </Link>
               <div className="h-5 w-px bg-border/50 mx-1" />
               <span className="text-xs text-muted-foreground font-body">Dashboard</span>
