@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate, Link } from "react-router-dom";
+import { Navigate, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, LogOut, Home, History, Zap, Bug, AlertTriangle, Activity, Scan, Sparkles, User, Settings, Mail, ChevronDown, ShieldAlert, ShieldCheck, X } from "lucide-react";
 import ScanForm, { type ScanMode } from "@/components/dashboard/ScanForm";
@@ -65,6 +65,7 @@ const StatCard = ({ stat, index }: { stat: { label: string; value: number; icon:
 
 const Dashboard = () => {
   const { user, signOut, loading } = useAuth();
+  const navigate = useNavigate();
   const [view, setView] = useState<DashboardView>("home");
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [isScanning, setIsScanning] = useState(false);
@@ -293,9 +294,10 @@ const Dashboard = () => {
                         {/* Menu items */}
                         <div className="p-2">
                           {[
-                            { icon: User, label: "Profile", action: () => setShowProfileMenu(false) },
-                            { icon: Settings, label: "Settings", action: () => setShowProfileMenu(false) },
-                            { icon: History, label: "Scan History", action: () => setShowProfileMenu(false) },
+                            { icon: User, label: "Profile", action: () => { setShowProfileMenu(false); navigate("/profile"); } },
+                            { icon: Settings, label: "Settings", action: () => { setShowProfileMenu(false); navigate("/settings"); } },
+                            { icon: Sparkles, label: "AI Feed", action: () => { setShowProfileMenu(false); navigate("/feed"); } },
+                            { icon: History, label: "Scan History", action: () => { setShowProfileMenu(false); } },
                           ].map((item) => (
                             <button
                               key={item.label}
