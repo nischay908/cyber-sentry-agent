@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Shield, Copy, ExternalLink, Download, FileCode, ChevronDown, ChevronUp,
   AlertTriangle, AlertCircle, Info, CheckCircle, XCircle, Bot, Send,
-  Code, FileCheck, Bug, Sparkles, User, ArrowLeft,
+  Code, FileCheck, Bug, Sparkles, User, ArrowLeft, X, FileText, Clipboard, Monitor,
 } from "lucide-react";
 import type { ScanResult, Vulnerability } from "@/lib/scanEngine";
 import { useToast } from "@/hooks/use-toast";
