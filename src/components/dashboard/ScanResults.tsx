@@ -60,7 +60,7 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
   };
 
   const exportReport = () => {
-    const report = `# Security Scan Report\n## Red Team Cyber-Sentry\nGenerated: ${result.timestamp.toLocaleString()}\nScan Duration: ${result.scanDuration.toFixed(1)}s\nMode: ${result.mode === "code" ? `Code Analysis (${result.language})` : `URL Scan`}\n\n## Summary\n- Critical: ${result.summary.critical}\n- High: ${result.summary.high}\n- Medium: ${result.summary.medium}\n- Low: ${result.summary.low}\n- Info: ${result.summary.info}\n\n## Vulnerabilities\n${result.vulnerabilities.map((v, i) => `### ${i + 1}. ${v.title}\n- Severity: ${v.severity.toUpperCase()}\n- Type: ${v.type}\n- Description: ${v.description}\n${v.fix ? `\n**Fix:**\n\`\`\`\n${v.fix}\n\`\`\`` : ""}\n`).join("\n")}`;
+    const report = `# Security Scan Report\n## VulnHunter\nGenerated: ${result.timestamp.toLocaleString()}\nScan Duration: ${result.scanDuration.toFixed(1)}s\nMode: ${result.mode === "code" ? `Code Analysis (${result.language})` : `URL Scan`}\n\n## Summary\n- Critical: ${result.summary.critical}\n- High: ${result.summary.high}\n- Medium: ${result.summary.medium}\n- Low: ${result.summary.low}\n- Info: ${result.summary.info}\n\n## Vulnerabilities\n${result.vulnerabilities.map((v, i) => `### ${i + 1}. ${v.title}\n- Severity: ${v.severity.toUpperCase()}\n- Type: ${v.type}\n- Description: ${v.description}\n${v.fix ? `\n**Fix:**\n\`\`\`\n${v.fix}\n\`\`\`` : ""}\n`).join("\n")}`;
     const blob = new Blob([report], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
