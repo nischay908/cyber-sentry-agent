@@ -10,11 +10,7 @@ import { Shield, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
-  const [showSplash, setShowSplash] = useState(() => {
-    if (sessionStorage.getItem("splashShown")) return false;
-    sessionStorage.setItem("splashShown", "true");
-    return true;
-  });
+  const [showSplash, setShowSplash] = useState(true);
 
   const handleSplashComplete = useCallback(() => {
     setShowSplash(false);
