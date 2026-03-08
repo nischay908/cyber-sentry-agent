@@ -25,7 +25,7 @@ const LoginPage = () => {
       if (isSignup) {
         const { error } = await signUp(email, password, displayName);
         if (error) throw error;
-        toast({ title: "Account created!", description: "Welcome to Red Team!" });
+        toast({ title: "Account created!", description: "Welcome to VulnHunter!" });
         navigate("/dashboard");
       } else {
         const { error } = await signIn(email, password);
@@ -53,19 +53,17 @@ const LoginPage = () => {
         <div className="rounded-2xl glass-card overflow-hidden">
           {/* Header with Logo */}
           <div className="p-8 text-center">
-            <div className="flex items-center justify-center gap-2.5 mb-6">
+            <Link to="/" className="inline-flex items-center justify-center gap-2.5 mb-6">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-primary to-secondary">
                 <Shield className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="font-display font-bold text-lg">
-                <span className="gradient-text">Red Team</span>
-              </span>
-            </div>
+              <span className="font-display font-bold text-lg gradient-text">VulnHunter</span>
+            </Link>
             <h1 className="font-display text-2xl font-bold">
               {isSignup ? <span className="gradient-text">Create Account</span> : <span className="gradient-text">Welcome Back</span>}
             </h1>
             <p className="text-sm text-muted-foreground font-body mt-2">
-              {isSignup ? "Join the Red Team security network" : "Sign in to access your dashboard"}
+              {isSignup ? "Join the VulnHunter security network" : "Sign in to access your dashboard"}
             </p>
           </div>
 

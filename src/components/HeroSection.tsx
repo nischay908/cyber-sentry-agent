@@ -29,10 +29,7 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.7 }}
           >
-            <span className="gradient-text">Red Team</span>
-            <br />
-            <span className="text-foreground">Cyber-</span>
-            <span className="gradient-text-alt">Sentry</span>
+            <span className="gradient-text">VulnHunter</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -60,7 +57,7 @@ const HeroSection = () => {
               style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-pink)))" }}
             >
               <Shield className="w-4 h-4" />
-              Launch Sentry
+              Launch VulnHunter
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <a
@@ -84,10 +81,10 @@ const HeroSection = () => {
                 <div className="w-3 h-3 rounded-full bg-destructive/70" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
                 <div className="w-3 h-3 rounded-full bg-neon-green/70" />
-                <span className="ml-2 text-xs text-muted-foreground font-body">sentry@redteam:~</span>
+                <span className="ml-2 text-xs text-muted-foreground font-body">vulnhunter@agent:~</span>
               </div>
               <div className="p-5 text-sm font-mono space-y-1.5 text-left">
-                <TerminalLine delay={1.5} color="text-neon-green">$ sentry scan --target ./codebase --mode aggressive</TerminalLine>
+                <TerminalLine delay={1.5} color="text-neon-green">$ vulnhunter scan --target ./codebase --mode aggressive</TerminalLine>
                 <TerminalLine delay={2.0} color="text-muted-foreground">[INFO] Initializing Semgrep engine...</TerminalLine>
                 <TerminalLine delay={2.5} color="text-muted-foreground">[INFO] Running nmap port scan on 192.168.1.0/24</TerminalLine>
                 <TerminalLine delay={3.0} color="text-secondary">[VULN] SQL Injection found in /api/users — severity: CRITICAL</TerminalLine>

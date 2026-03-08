@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import SplashScreen from "@/components/SplashScreen";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -11,7 +11,6 @@ import { Link } from "react-router-dom";
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(() => {
-    // Only show splash on very first visit of the session
     if (sessionStorage.getItem("splashShown")) return false;
     sessionStorage.setItem("splashShown", "true");
     return true;
@@ -19,7 +18,6 @@ const Index = () => {
 
   const handleSplashComplete = useCallback(() => {
     setShowSplash(false);
-    sessionStorage.setItem("splashShown", "true");
   }, []);
 
   if (showSplash) {
@@ -72,9 +70,7 @@ const Index = () => {
               <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary to-secondary">
                 <Shield className="w-4 h-4 text-primary-foreground" />
               </div>
-              <span className="font-display text-sm font-bold">
-                <span className="gradient-text">Red Team</span> <span className="text-muted-foreground">Cyber-Sentry</span>
-              </span>
+              <span className="font-display text-sm font-bold gradient-text">VulnHunter</span>
             </div>
             <div className="flex items-center gap-6 text-sm font-body text-muted-foreground">
               <a href="#features" className="hover:text-foreground transition-colors">Features</a>
@@ -82,7 +78,7 @@ const Index = () => {
               <Link to="/login" className="hover:text-foreground transition-colors">Login</Link>
             </div>
             <p className="text-xs text-muted-foreground font-body">
-              © 2026 Red Team Cyber-Sentry. Hackathon Project.
+              © 2026 VulnHunter. Hackathon Project.
             </p>
           </div>
         </div>
