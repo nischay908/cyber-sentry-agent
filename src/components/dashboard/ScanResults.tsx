@@ -527,6 +527,95 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
           </AnimatePresence>
         </div>
       </motion.div>
+      {/* Export Popup */}
+      <AnimatePresence>
+        {showExportPopup && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowExportPopup(false)}
+          >
+            <motion.div
+              className="glass-card rounded-2xl p-6 w-full max-w-md mx-4 border border-border/50"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="font-display text-lg font-bold gradient-text">Export & Share</h3>
+                <button onClick={() => setShowExportPopup(false)} className="p-1.5 rounded-lg hover:bg-muted/50 transition-colors">
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+              <div className="space-y-2">
+                {[
+                  {
+                    icon: Clipboard, label: "Copy Corrected Code", desc: "Copy fixed code to clipboard",
+                    action: () => { copyToClipboard(getCorrectedCode(), "Corrected code"); setShowExportPopup(false); },
+                  },
+                  {
+                    icon: Copy, label: "Copy Original Code", desc: "Copy the scanned code to clipboard",
+                    action: () => { copyToClipboard(result.target || "", "Original code"); setShowExportPopup(false); },
+                  },
+                  {
+                    icon: Monitor, label: "Open in VS Code", desc: "Open corrected code in VS Code",
+                    action: () => {
+                      const code = getCorrectedCode();
+                      const blob = new Blob([code], { type: "text/plain" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      const ext = result.language?.toLowerCase() === "python" ? "py" : result.language?.toLowerCase() === "javascript" ? "js" : result.language?.toLowerCase() === "typescript" ? "ts" : "txt";
+                      a.download = `corrected-code.${ext}`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                      toast({ title: "File Downloaded", description: "Open the file in VS Code to apply fixes." });
+                      setShowExportPopup(false);
+                    },
+                  },
+                  {
+                    icon: FileText, label: "Download Report (MD)", desc: "Full vulnerability report as Markdown",
+                    action: () => { exportReport(); setShowExportPopup(false); },
+                  },
+                  {
+                    icon: Download, label: "Download Corrected Code", desc: "Save the patched code as a file",
+                    action: () => {
+                      const code = getCorrectedCode();
+                      const blob = new Blob([code], { type: "text/plain" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      const ext = result.language?.toLowerCase() === "python" ? "py" : result.language?.toLowerCase() === "javascript" ? "js" : result.language?.toLowerCase() === "typescript" ? "ts" : "txt";
+                      a.download = `corrected-code.${ext}`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                      toast({ title: "Downloaded!", description: "Corrected code file saved." });
+                      setShowExportPopup(false);
+                    },
+                  },
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={item.action}
+                    className="w-full flex items-center gap-3 p-3.5 rounded-xl glass-card hover:bg-muted/30 transition-all text-left group"
+                  >
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                      <item.icon className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-display font-medium text-foreground">{item.label}</p>
+                      <p className="text-xs text-muted-foreground font-body">{item.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
