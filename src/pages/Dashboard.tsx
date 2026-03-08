@@ -140,8 +140,8 @@ const Dashboard = () => {
   const criticalVulns = scanHistory.reduce((acc, s) => acc + s.summary.critical + s.summary.high, 0);
   const patchedCount = scanHistory.reduce((acc, s) => acc + s.vulnerabilities.filter(v => v.fix).length, 0);
 
-  const userInitial = user.user_metadata?.display_name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U";
-  const displayName = user.user_metadata?.display_name || user.email?.split("@")[0] || "User";
+  const displayName = profileName || user.user_metadata?.display_name || user.email?.split("@")[0] || "User";
+  const userInitial = displayName[0]?.toUpperCase() || "U";
 
   const stats = [
     { label: "Total Scans", value: totalScans, icon: Scan, gradient: "from-primary to-neon-pink", glow: "hsl(270 95% 60% / 0.15)" },
