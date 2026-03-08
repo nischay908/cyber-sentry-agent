@@ -30,7 +30,7 @@ const LoginPage = () => {
         const { error } = await signIn(email, password);
         if (error) throw error;
         toast({ title: "Welcome back!", description: "Successfully signed in." });
-        navigate("/");
+        navigate("/dashboard");
       }
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
