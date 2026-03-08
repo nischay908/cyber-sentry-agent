@@ -208,8 +208,8 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
-            <button onClick={exportReport} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium glass-card hover:bg-muted/50 transition-all">
-              <Download className="w-3.5 h-3.5" /> Export Report
+            <button onClick={() => setShowExportPopup(true)} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium text-primary-foreground glow-purple" style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-pink)))" }}>
+              <Download className="w-3.5 h-3.5" /> Export & Share
             </button>
             <button onClick={onNewScan} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium glass-card hover:bg-muted/50 transition-all">
               <ArrowLeft className="w-3.5 h-3.5" /> New Scan

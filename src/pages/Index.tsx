@@ -11,8 +11,10 @@ import { Link } from "react-router-dom";
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(() => {
-    // Only show splash once per session
-    return !sessionStorage.getItem("splashShown");
+    // Only show splash on very first visit of the session
+    if (sessionStorage.getItem("splashShown")) return false;
+    sessionStorage.setItem("splashShown", "true");
+    return true;
   });
 
   const handleSplashComplete = useCallback(() => {
