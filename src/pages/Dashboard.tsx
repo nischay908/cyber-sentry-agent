@@ -70,6 +70,8 @@ const Dashboard = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanMode, setScanMode] = useState<ScanMode>("code");
   const [scanHistory, setScanHistory] = useState<ScanResult[]>([]);
+  const [showVerdict, setShowVerdict] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   if (loading) {
     return (
