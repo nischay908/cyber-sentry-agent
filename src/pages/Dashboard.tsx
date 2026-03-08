@@ -63,7 +63,7 @@ const StatCard = ({ stat, index }: { stat: { label: string; value: number; icon:
   );
 };
 
-
+const Dashboard = () => {
   const { user, signOut, loading } = useAuth();
   const [view, setView] = useState<DashboardView>("home");
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
