@@ -1,14 +1,12 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Shield, Eye, EyeOff, ArrowRight, ArrowLeft, Mail, Lock, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import AnimatedBackground from "@/components/AnimatedBackground";
-import SplashScreen from "@/components/SplashScreen";
 
 const LoginPage = () => {
-  const [showSplash, setShowSplash] = useState(true);
   const [showPass, setShowPass] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
@@ -18,10 +16,6 @@ const LoginPage = () => {
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  const handleSplashComplete = useCallback(() => {
-    setShowSplash(false);
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,10 +39,6 @@ const LoginPage = () => {
       setLoading(false);
     }
   };
-
-  if (showSplash) {
-    return <SplashScreen onComplete={handleSplashComplete} />;
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background">
