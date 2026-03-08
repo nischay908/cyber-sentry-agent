@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Shield, Eye, EyeOff, ArrowRight, Mail, Lock, User } from "lucide-react";
+import { Shield, Eye, EyeOff, ArrowRight, ArrowLeft, Mail, Lock, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -50,13 +50,16 @@ const LoginPage = () => {
         transition={{ duration: 0.6 }}
       >
         <div className="rounded-2xl glass-card overflow-hidden">
-          {/* Header */}
+          {/* Header with Logo */}
           <div className="p-8 text-center">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6 group">
+            <div className="flex items-center justify-center gap-2.5 mb-6">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-primary to-secondary">
                 <Shield className="w-5 h-5 text-primary-foreground" />
               </div>
-            </Link>
+              <span className="font-display font-bold text-lg">
+                <span className="gradient-text">Red Team</span>
+              </span>
+            </div>
             <h1 className="font-display text-2xl font-bold">
               {isSignup ? <span className="gradient-text">Create Account</span> : <span className="gradient-text">Welcome Back</span>}
             </h1>
@@ -66,7 +69,7 @@ const LoginPage = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-4">
+          <form onSubmit={handleSubmit} className="px-8 pb-6 space-y-4">
             {isSignup && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
                 <label className="block text-xs font-body text-muted-foreground mb-1.5 font-medium">Display Name</label>
@@ -132,15 +135,26 @@ const LoginPage = () => {
             </motion.button>
           </form>
 
-          {/* Footer */}
-          <div className="border-t border-border/30 p-4 text-center">
-            <button
-              onClick={() => setIsSignup(!isSignup)}
-              className="text-sm font-body text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {isSignup ? "Already have an account? " : "Don't have an account? "}
-              <span className="gradient-text font-medium">{isSignup ? "Sign in" : "Sign up"}</span>
-            </button>
+          {/* Toggle + Home Link */}
+          <div className="border-t border-border/30 px-8 py-4 space-y-3">
+            <div className="text-center">
+              <button
+                onClick={() => setIsSignup(!isSignup)}
+                className="text-sm font-body text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {isSignup ? "Already have an account? " : "Don't have an account? "}
+                <span className="gradient-text font-medium">{isSignup ? "Sign in" : "Sign up"}</span>
+              </button>
+            </div>
+            <div className="text-center">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-1.5 text-xs font-body text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="w-3 h-3" />
+                Back to Home
+              </Link>
+            </div>
           </div>
         </div>
       </motion.div>
