@@ -466,6 +466,161 @@ const Dashboard = () => {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* ─── Security Verdict Popup ─── */}
+      <AnimatePresence>
+        {showVerdict && scanResult && (() => {
+          const isDangerous = scanResult.summary.critical > 0 || scanResult.summary.high > 0;
+          const hasMedium = scanResult.summary.medium > 0;
+          const isSafe = !isDangerous && !hasMedium && scanResult.vulnerabilities.length === 0;
+          return (
+            <motion.div
+              className="fixed inset-0 z-[60] flex items-center justify-center"
+              style={{ background: "hsl(0 0% 0% / 0.7)", backdropFilter: "blur(8px)" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => { setShowVerdict(false); setView("results"); }}
+            >
+              <motion.div
+                className="relative w-full max-w-sm mx-4 rounded-3xl p-8 text-center overflow-hidden"
+                style={{
+                  background: "hsl(var(--card) / 0.95)",
+                  border: `1px solid ${isDangerous ? "hsl(0 84% 60% / 0.3)" : isSafe ? "hsl(150 80% 50% / 0.3)" : "hsl(45 95% 55% / 0.3)"}`,
+                  boxShadow: isDangerous
+                    ? "0 0 80px hsl(0 84% 60% / 0.2)"
+                    : isSafe
+                    ? "0 0 80px hsl(150 80% 50% / 0.2)"
+                    : "0 0 80px hsl(45 95% 55% / 0.15)",
+                }}
+                initial={{ scale: 0.5, opacity: 0, y: 30 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.8, opacity: 0, y: 20 }}
+                transition={{ type: "spring", bounce: 0.3 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Close */}
+                <button
+                  onClick={() => { setShowVerdict(false); setView("results"); }}
+                  className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-muted/30 transition-colors"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+
+                {/* Icon */}
+                <motion.div
+                  className="w-20 h-20 rounded-3xl mx-auto mb-5 flex items-center justify-center"
+                  style={{
+                    background: isDangerous
+                      ? "linear-gradient(135deg, hsl(0 84% 60% / 0.2), hsl(30 90% 55% / 0.15))"
+                      : isSafe
+                      ? "linear-gradient(135deg, hsl(150 80% 50% / 0.2), hsl(200 95% 55% / 0.15))"
+                      : "linear-gradient(135deg, hsl(45 95% 55% / 0.2), hsl(30 90% 55% / 0.15))",
+                  }}
+                  initial={{ rotate: -20, scale: 0 }}
+                  animate={{
+                    rotate: 0,
+                    scale: 1,
+                    boxShadow: isDangerous
+                      ? ["0 0 30px hsl(0 84% 60% / 0.2)", "0 0 60px hsl(0 84% 60% / 0.4)", "0 0 30px hsl(0 84% 60% / 0.2)"]
+                      : isSafe
+                      ? ["0 0 30px hsl(150 80% 50% / 0.2)", "0 0 60px hsl(150 80% 50% / 0.4)", "0 0 30px hsl(150 80% 50% / 0.2)"]
+                      : ["0 0 30px hsl(45 95% 55% / 0.2)", "0 0 50px hsl(45 95% 55% / 0.3)", "0 0 30px hsl(45 95% 55% / 0.2)"],
+                  }}
+                  transition={{ scale: { type: "spring", bounce: 0.4, delay: 0.2 }, boxShadow: { duration: 2, repeat: Infinity } }}
+                >
+                  {isDangerous ? (
+                    <ShieldAlert className="w-10 h-10 text-destructive" />
+                  ) : isSafe ? (
+                    <ShieldCheck className="w-10 h-10 text-neon-green" />
+                  ) : (
+                    <AlertTriangle className="w-10 h-10 text-yellow-400" />
+                  )}
+                </motion.div>
+
+                {/* Verdict text */}
+                <motion.h2
+                  className="font-display text-2xl font-bold mb-2"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {isDangerous ? (
+                    <span className="text-destructive">
+                      {scanResult.mode === "url" ? "⚠️ Site Compromised!" : "🚨 Dangerous Code Detected!"}
+                    </span>
+                  ) : isSafe ? (
+                    <span className="text-neon-green">
+                      {scanResult.mode === "url" ? "✅ Site is Secure" : "✅ Code is Clean"}
+                    </span>
+                  ) : (
+                    <span className="text-yellow-400">
+                      {scanResult.mode === "url" ? "⚡ Potential Risks Found" : "⚡ Minor Issues Found"}
+                    </span>
+                  )}
+                </motion.h2>
+
+                <motion.p
+                  className="text-sm text-muted-foreground font-body mb-6 max-w-xs mx-auto"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  {isDangerous
+                    ? `Found ${scanResult.summary.critical} critical and ${scanResult.summary.high} high severity vulnerabilities that need immediate attention.`
+                    : isSafe
+                    ? "No vulnerabilities detected. Your security posture looks excellent!"
+                    : `Found ${scanResult.vulnerabilities.length} minor issues. Review recommended.`}
+                </motion.p>
+
+                {/* Stats mini */}
+                <motion.div
+                  className="flex justify-center gap-4 mb-6"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  {scanResult.summary.critical > 0 && (
+                    <div className="px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20">
+                      <span className="text-xs font-bold text-red-400">{scanResult.summary.critical} Critical</span>
+                    </div>
+                  )}
+                  {scanResult.summary.high > 0 && (
+                    <div className="px-3 py-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                      <span className="text-xs font-bold text-orange-400">{scanResult.summary.high} High</span>
+                    </div>
+                  )}
+                  {scanResult.summary.medium > 0 && (
+                    <div className="px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                      <span className="text-xs font-bold text-yellow-400">{scanResult.summary.medium} Medium</span>
+                    </div>
+                  )}
+                </motion.div>
+
+                {/* Action button */}
+                <motion.button
+                  onClick={() => { setShowVerdict(false); setView("results"); }}
+                  className="w-full py-3.5 rounded-xl text-primary-foreground font-display text-sm font-semibold tracking-wide"
+                  style={{
+                    background: isDangerous
+                      ? "linear-gradient(135deg, hsl(0 84% 50%), hsl(30 90% 50%))"
+                      : isSafe
+                      ? "linear-gradient(135deg, hsl(150 80% 40%), hsl(200 95% 45%))"
+                      : "linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-pink)))",
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  View Full Report →
+                </motion.button>
+              </motion.div>
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
     </div>
   );
 };
