@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, LogOut, Home, History, Zap, Bug, AlertTriangle, Activity, Scan, Sparkles } from "lucide-react";
+import { Shield, LogOut, Home, History, Zap, Bug, AlertTriangle, Activity, Scan, Sparkles, User, Settings, Mail, ChevronDown, ShieldAlert, ShieldCheck, X } from "lucide-react";
 import ScanForm, { type ScanMode } from "@/components/dashboard/ScanForm";
 import ScanResults from "@/components/dashboard/ScanResults";
 import ScanProgress from "@/components/dashboard/ScanProgress";
@@ -70,6 +70,24 @@ const Dashboard = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanMode, setScanMode] = useState<ScanMode>("code");
   const [scanHistory, setScanHistory] = useState<ScanResult[]>([]);
+  const [showVerdict, setShowVerdict] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [profileName, setProfileName] = useState<string | null>(null);
+
+  // Fetch display name from profiles table
+  useEffect(() => {
+    if (!user) return;
+    const fetchProfile = async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase
+        .from("profiles")
+        .select("display_name")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (data?.display_name) setProfileName(data.display_name);
+    };
+    fetchProfile();
+  }, [user]);
 
   if (loading) {
     return (
@@ -107,7 +125,7 @@ const Dashboard = () => {
       const result = await generateScanResults(data.mode, data.content, data.language);
       setScanResult(result);
       setScanHistory(prev => [result, ...prev]);
-      setView("results");
+      setShowVerdict(true);
     } catch {
       setView("home");
     } finally {
@@ -122,8 +140,8 @@ const Dashboard = () => {
   const criticalVulns = scanHistory.reduce((acc, s) => acc + s.summary.critical + s.summary.high, 0);
   const patchedCount = scanHistory.reduce((acc, s) => acc + s.vulnerabilities.filter(v => v.fix).length, 0);
 
-  const userInitial = user.user_metadata?.display_name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U";
-  const displayName = user.user_metadata?.display_name || user.email?.split("@")[0] || "User";
+  const displayName = profileName || user.user_metadata?.display_name || user.email?.split("@")[0] || "User";
+  const userInitial = displayName[0]?.toUpperCase() || "U";
 
   const stats = [
     { label: "Total Scans", value: totalScans, icon: Scan, gradient: "from-primary to-neon-pink", glow: "hsl(270 95% 60% / 0.15)" },
@@ -222,23 +240,87 @@ const Dashboard = () => {
                 </Link>
               </motion.div>
 
-              {/* User avatar */}
-              <div className="flex items-center gap-2.5 pl-2">
-                <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-display font-bold text-primary-foreground"
-                  style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple) / 0.8), hsl(var(--neon-pink) / 0.8))" }}
-                >
-                  {userInitial}
-                </div>
+              {/* Profile avatar + dropdown */}
+              <div className="relative pl-2">
                 <motion.button
-                  onClick={signOut}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-body text-muted-foreground hover:text-destructive transition-all"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                  className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl transition-all"
                   style={{ border: "1px solid hsl(var(--border) / 0.3)" }}
-                  whileHover={{ scale: 1.05, borderColor: "hsl(0 84% 60% / 0.3)" }}
+                  whileHover={{ borderColor: "hsl(var(--neon-purple) / 0.3)" }}
                 >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Logout</span>
+                  <div
+                    className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-display font-bold text-primary-foreground"
+                    style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple) / 0.8), hsl(var(--neon-pink) / 0.8))" }}
+                  >
+                    {userInitial}
+                  </div>
+                  <span className="text-xs font-body font-medium text-foreground hidden sm:inline">{displayName}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground transition-transform ${showProfileMenu ? "rotate-180" : ""}`} />
                 </motion.button>
+
+                <AnimatePresence>
+                  {showProfileMenu && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
+                      <motion.div
+                        className="absolute right-0 top-full mt-2 w-64 rounded-2xl z-50 overflow-hidden"
+                        style={{
+                          background: "hsl(var(--card) / 0.95)",
+                          backdropFilter: "blur(20px)",
+                          border: "1px solid hsl(var(--border) / 0.4)",
+                          boxShadow: "0 20px 60px hsl(0 0% 0% / 0.4)",
+                        }}
+                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {/* Profile header */}
+                        <div className="p-4 border-b border-border/30">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="w-11 h-11 rounded-xl flex items-center justify-center text-sm font-display font-bold text-primary-foreground"
+                              style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-pink)))" }}
+                            >
+                              {userInitial}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-display font-semibold text-foreground truncate">{displayName}</p>
+                              <p className="text-xs text-muted-foreground font-body truncate">{user.email}</p>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Menu items */}
+                        <div className="p-2">
+                          {[
+                            { icon: User, label: "Profile", action: () => setShowProfileMenu(false) },
+                            { icon: Settings, label: "Settings", action: () => setShowProfileMenu(false) },
+                            { icon: History, label: "Scan History", action: () => setShowProfileMenu(false) },
+                          ].map((item) => (
+                            <button
+                              key={item.label}
+                              onClick={item.action}
+                              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-body text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-all"
+                            >
+                              <item.icon className="w-4 h-4" />
+                              {item.label}
+                            </button>
+                          ))}
+                        </div>
+                        {/* Logout */}
+                        <div className="p-2 border-t border-border/30">
+                          <button
+                            onClick={() => { setShowProfileMenu(false); signOut(); }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-body text-destructive hover:bg-destructive/10 transition-all"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            Sign Out
+                          </button>
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>
@@ -400,6 +482,161 @@ const Dashboard = () => {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* ─── Security Verdict Popup ─── */}
+      <AnimatePresence>
+        {showVerdict && scanResult && (() => {
+          const isDangerous = scanResult.summary.critical > 0 || scanResult.summary.high > 0;
+          const hasMedium = scanResult.summary.medium > 0;
+          const isSafe = !isDangerous && !hasMedium && scanResult.vulnerabilities.length === 0;
+          return (
+            <motion.div
+              className="fixed inset-0 z-[60] flex items-center justify-center"
+              style={{ background: "hsl(0 0% 0% / 0.7)", backdropFilter: "blur(8px)" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => { setShowVerdict(false); setView("results"); }}
+            >
+              <motion.div
+                className="relative w-full max-w-sm mx-4 rounded-3xl p-8 text-center overflow-hidden"
+                style={{
+                  background: "hsl(var(--card) / 0.95)",
+                  border: `1px solid ${isDangerous ? "hsl(0 84% 60% / 0.3)" : isSafe ? "hsl(150 80% 50% / 0.3)" : "hsl(45 95% 55% / 0.3)"}`,
+                  boxShadow: isDangerous
+                    ? "0 0 80px hsl(0 84% 60% / 0.2)"
+                    : isSafe
+                    ? "0 0 80px hsl(150 80% 50% / 0.2)"
+                    : "0 0 80px hsl(45 95% 55% / 0.15)",
+                }}
+                initial={{ scale: 0.5, opacity: 0, y: 30 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.8, opacity: 0, y: 20 }}
+                transition={{ type: "spring", bounce: 0.3 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Close */}
+                <button
+                  onClick={() => { setShowVerdict(false); setView("results"); }}
+                  className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-muted/30 transition-colors"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+
+                {/* Icon */}
+                <motion.div
+                  className="w-20 h-20 rounded-3xl mx-auto mb-5 flex items-center justify-center"
+                  style={{
+                    background: isDangerous
+                      ? "linear-gradient(135deg, hsl(0 84% 60% / 0.2), hsl(30 90% 55% / 0.15))"
+                      : isSafe
+                      ? "linear-gradient(135deg, hsl(150 80% 50% / 0.2), hsl(200 95% 55% / 0.15))"
+                      : "linear-gradient(135deg, hsl(45 95% 55% / 0.2), hsl(30 90% 55% / 0.15))",
+                  }}
+                  initial={{ rotate: -20, scale: 0 }}
+                  animate={{
+                    rotate: 0,
+                    scale: 1,
+                    boxShadow: isDangerous
+                      ? ["0 0 30px hsl(0 84% 60% / 0.2)", "0 0 60px hsl(0 84% 60% / 0.4)", "0 0 30px hsl(0 84% 60% / 0.2)"]
+                      : isSafe
+                      ? ["0 0 30px hsl(150 80% 50% / 0.2)", "0 0 60px hsl(150 80% 50% / 0.4)", "0 0 30px hsl(150 80% 50% / 0.2)"]
+                      : ["0 0 30px hsl(45 95% 55% / 0.2)", "0 0 50px hsl(45 95% 55% / 0.3)", "0 0 30px hsl(45 95% 55% / 0.2)"],
+                  }}
+                  transition={{ scale: { type: "spring", bounce: 0.4, delay: 0.2 }, boxShadow: { duration: 2, repeat: Infinity } }}
+                >
+                  {isDangerous ? (
+                    <ShieldAlert className="w-10 h-10 text-destructive" />
+                  ) : isSafe ? (
+                    <ShieldCheck className="w-10 h-10 text-neon-green" />
+                  ) : (
+                    <AlertTriangle className="w-10 h-10 text-yellow-400" />
+                  )}
+                </motion.div>
+
+                {/* Verdict text */}
+                <motion.h2
+                  className="font-display text-2xl font-bold mb-2"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {isDangerous ? (
+                    <span className="text-destructive">
+                      {scanResult.mode === "url" ? "⚠️ Site Compromised!" : "🚨 Dangerous Code Detected!"}
+                    </span>
+                  ) : isSafe ? (
+                    <span className="text-neon-green">
+                      {scanResult.mode === "url" ? "✅ Site is Secure" : "✅ Code is Clean"}
+                    </span>
+                  ) : (
+                    <span className="text-yellow-400">
+                      {scanResult.mode === "url" ? "⚡ Potential Risks Found" : "⚡ Minor Issues Found"}
+                    </span>
+                  )}
+                </motion.h2>
+
+                <motion.p
+                  className="text-sm text-muted-foreground font-body mb-6 max-w-xs mx-auto"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  {isDangerous
+                    ? `Found ${scanResult.summary.critical} critical and ${scanResult.summary.high} high severity vulnerabilities that need immediate attention.`
+                    : isSafe
+                    ? "No vulnerabilities detected. Your security posture looks excellent!"
+                    : `Found ${scanResult.vulnerabilities.length} minor issues. Review recommended.`}
+                </motion.p>
+
+                {/* Stats mini */}
+                <motion.div
+                  className="flex justify-center gap-4 mb-6"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  {scanResult.summary.critical > 0 && (
+                    <div className="px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20">
+                      <span className="text-xs font-bold text-red-400">{scanResult.summary.critical} Critical</span>
+                    </div>
+                  )}
+                  {scanResult.summary.high > 0 && (
+                    <div className="px-3 py-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                      <span className="text-xs font-bold text-orange-400">{scanResult.summary.high} High</span>
+                    </div>
+                  )}
+                  {scanResult.summary.medium > 0 && (
+                    <div className="px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                      <span className="text-xs font-bold text-yellow-400">{scanResult.summary.medium} Medium</span>
+                    </div>
+                  )}
+                </motion.div>
+
+                {/* Action button */}
+                <motion.button
+                  onClick={() => { setShowVerdict(false); setView("results"); }}
+                  className="w-full py-3.5 rounded-xl text-primary-foreground font-display text-sm font-semibold tracking-wide"
+                  style={{
+                    background: isDangerous
+                      ? "linear-gradient(135deg, hsl(0 84% 50%), hsl(30 90% 50%))"
+                      : isSafe
+                      ? "linear-gradient(135deg, hsl(150 80% 40%), hsl(200 95% 45%))"
+                      : "linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-pink)))",
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  View Full Report →
+                </motion.button>
+              </motion.div>
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
     </div>
   );
 };
