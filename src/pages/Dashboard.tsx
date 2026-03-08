@@ -259,43 +259,9 @@ const Dashboard = () => {
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {stats.map((stat, i) => {
-                    const animatedValue = useAnimatedCounter(stat.value);
-                    return (
-                      <motion.div
-                        key={stat.label}
-                        className="group relative overflow-hidden rounded-2xl p-5 cursor-default"
-                        style={{
-                          background: "hsl(var(--card) / 0.5)",
-                          backdropFilter: "blur(20px)",
-                          border: "1px solid hsl(var(--border) / 0.3)",
-                        }}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 + i * 0.08 }}
-                        whileHover={{
-                          y: -4,
-                          boxShadow: `0 10px 40px ${stat.glow}`,
-                          borderColor: "hsl(var(--neon-purple) / 0.3)",
-                        }}
-                      >
-                        {/* Hover glow */}
-                        <div
-                          className="absolute -top-10 -right-10 w-28 h-28 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                          style={{ background: `radial-gradient(circle, ${stat.glow}, transparent 70%)` }}
-                        />
-                        <div className="relative z-10">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${stat.gradient} mb-3`}>
-                            <stat.icon className="w-5 h-5 text-primary-foreground" />
-                          </div>
-                          <p className="text-3xl md:text-4xl font-display font-bold text-foreground mb-1">
-                            {animatedValue}
-                          </p>
-                          <p className="text-xs text-muted-foreground font-body font-medium">{stat.label}</p>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
+                  {stats.map((stat, i) => (
+                    <StatCard key={stat.label} stat={stat} index={i} />
+                  ))}
                 </div>
 
                 {/* Scan Form */}
