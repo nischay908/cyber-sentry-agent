@@ -39,6 +39,7 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [isChatLoading, setIsChatLoading] = useState(false);
+  const [autoAnalysisDone, setAutoAnalysisDone] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
 
@@ -51,6 +52,25 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
       setTimeout(() => chatInputRef.current?.focus(), 200);
     }
   }, [activeTab]);
+
+  // Auto-trigger AI analysis when results load with vulnerabilities
+  useEffect(() => {
+    if (autoAnalysisDone || result.vulnerabilities.length === 0) return;
+    setAutoAnalysisDone(true);
+    
+    // Build auto-analysis prompt
+    const vulnSummary = result.vulnerabilities
+      .map((v) => `- **${v.title}** (${v.severity.toUpperCase()}): ${v.description}${v.codeSnippet ? `\n  Code: \`${v.codeSnippet.slice(0, 100)}\`` : ""}`)
+      .join("\n");
+    
+    const autoPrompt = result.mode === "url"
+      ? `I just scanned the website and found these security issues. Analyze the threat level, tell me if this site is compromised or at risk, and give me a complete protection plan:\n\n**Scan Target:** ${result.target || "Website"}\n**Vulnerabilities Found:**\n${vulnSummary}\n\n**Summary:** ${result.summary.critical} critical, ${result.summary.high} high, ${result.summary.medium} medium, ${result.summary.low} low\n\nGive me:\n1. Is this site hacked/compromised?\n2. Immediate protection steps\n3. Full remediation plan\n4. Security hardening recommendations`
+      : `I just scanned my ${result.language || ""} code and found these vulnerabilities. Analyze them and tell me if dangerous changes have been made, and provide a complete fix plan:\n\n**Vulnerabilities Found:**\n${vulnSummary}\n\n**Summary:** ${result.summary.critical} critical, ${result.summary.high} high, ${result.summary.medium} medium, ${result.summary.low} low\n\nGive me:\n1. Are there dangerous/malicious changes?\n2. Priority fix order\n3. Code fixes for each issue\n4. Security hardening recommendations`;
+
+    // Auto-switch to AI tab and send
+    setActiveTab("ai-agent");
+    setTimeout(() => sendChatMessage(autoPrompt), 500);
+  }, [result]);
 
   const totalVulns = result.vulnerabilities.length;
 
