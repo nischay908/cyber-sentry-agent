@@ -1,84 +1,130 @@
 import { useState, useCallback } from "react";
-import SplashScreen from "@/components/SplashScreen";
-import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
-import FeaturesSection from "@/components/FeaturesSection";
-import HowItWorks from "@/components/HowItWorks";
-import AnimatedBackground from "@/components/AnimatedBackground";
+import Preloader from "@/components/Preloader";
 import { motion } from "framer-motion";
-import { Shield, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import GeometricScene from "@/components/GeometricScene";
+
+const navItems = ["Home", "Projects", "Philosophy", "About"];
 
 const Index = () => {
-  const [showSplash, setShowSplash] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const handleSplashComplete = useCallback(() => {
-    setShowSplash(false);
+  const handleComplete = useCallback(() => {
+    setLoading(false);
   }, []);
 
-  if (showSplash) {
-    return <SplashScreen onComplete={handleSplashComplete} />;
+  if (loading) {
+    return <Preloader onComplete={handleComplete} />;
   }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-      <AnimatedBackground />
-      <Navbar />
-      <HeroSection />
-      <FeaturesSection />
-      <HowItWorks />
-
-      {/* CTA Section */}
-      <section className="py-24 relative z-10">
-        <div className="container mx-auto px-4">
-          <motion.div
-            className="max-w-3xl mx-auto text-center glass-card rounded-3xl p-12 relative overflow-hidden"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="absolute inset-0 opacity-30" style={{ background: "radial-gradient(circle at center, hsl(var(--neon-purple) / 0.2), transparent 70%)" }} />
-            <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                <span className="gradient-text">Ready to Secure Your Code?</span>
-              </h2>
-              <p className="text-muted-foreground font-body mb-8 max-w-lg mx-auto">
-                Start scanning for vulnerabilities in seconds. Our AI-powered agent finds threats before attackers do.
-              </p>
-              <Link
-                to="/login"
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-primary-foreground font-display text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 glow-purple"
-                style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-pink)))" }}
+    <motion.div
+      className="h-screen w-screen flex overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+    >
+      {/* ─── Left Half: White ─── */}
+      <div className="relative w-full lg:w-1/2 h-full bg-background flex flex-col justify-between px-8 md:px-16 py-10">
+        {/* Navigation */}
+        <motion.nav
+          className="flex gap-8"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          {navItems.map((item, i) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className="font-sans text-xs tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
+            >
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 + i * 0.1 }}
               >
-                Get Started Free
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+                {item}
+              </motion.span>
+            </a>
+          ))}
+        </motion.nav>
+
+        {/* Hero text */}
+        <div className="flex-1 flex flex-col justify-center max-w-md">
+          <motion.h1
+            className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[1.1] text-foreground mb-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            The{" "}
+            <span className="italic font-light">Subtlety</span>
+            <br />
+            of Design.
+          </motion.h1>
+
+          <motion.p
+            className="font-sans text-sm leading-relaxed text-muted-foreground max-w-sm"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.8 }}
+          >
+            Architecture that exists in harmony. We define space
+            with light and balance.
+          </motion.p>
+
+          <motion.div
+            className="mt-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2 }}
+          >
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-3 font-sans text-xs tracking-[0.2em] uppercase text-foreground hover:text-muted-foreground transition-colors duration-300 group"
+            >
+              <span>Explore Projects</span>
+              <span className="w-8 h-px bg-foreground group-hover:w-12 transition-all duration-300" />
+            </Link>
           </motion.div>
         </div>
-      </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/30 py-10 relative z-10">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary to-secondary">
-                <Shield className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <span className="font-display text-sm font-bold gradient-text">VulnHunter</span>
-            </div>
-            <div className="flex items-center gap-6 text-sm font-body text-muted-foreground">
-              <a href="#features" className="hover:text-foreground transition-colors">Features</a>
-              <a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
-              <Link to="/login" className="hover:text-foreground transition-colors">Login</Link>
-            </div>
-            <p className="text-xs text-muted-foreground font-body">
-              © 2026 VulnHunter. Hackathon Project.
-            </p>
-          </div>
-        </div>
-      </footer>
+        {/* Footer */}
+        <motion.div
+          className="flex items-center justify-between"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.4 }}
+        >
+          <span className="font-serif text-sm tracking-[0.15em] text-foreground">
+            STUDIO <span className="text-muted-foreground">&</span> FORM
+          </span>
+          <span className="font-sans text-[10px] tracking-[0.3em] uppercase text-muted-foreground">
+            © 2026
+          </span>
+        </motion.div>
+      </div>
+
+      {/* ─── Center divider ─── */}
+      <motion.div
+        className="hidden lg:block center-divider flex-shrink-0"
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: 1 }}
+        transition={{ duration: 1, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        style={{ transformOrigin: "top" }}
+      />
+
+      {/* ─── Right Half: Beige with 3D scene ─── */}
+      <motion.div
+        className="hidden lg:block w-1/2 h-full"
+        style={{ background: "hsl(var(--warm-beige))" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+      >
+        <GeometricScene />
+      </motion.div>
     </motion.div>
   );
 };

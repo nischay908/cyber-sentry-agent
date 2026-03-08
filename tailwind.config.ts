@@ -12,8 +12,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Space Grotesk", "sans-serif"],
-        body: ["Inter", "sans-serif"],
+        serif: ["Playfair Display", "serif"],
+        sans: ["Inter", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -28,11 +28,10 @@ export default {
         accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
         popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
         card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
-        "neon-purple": "hsl(var(--neon-purple))",
-        "neon-pink": "hsl(var(--neon-pink))",
-        "neon-blue": "hsl(var(--neon-blue))",
-        "neon-green": "hsl(var(--neon-green))",
-        "terminal-bg": "hsl(var(--terminal-bg))",
+        "warm-beige": "hsl(var(--warm-beige))",
+        "warm-beige-dark": "hsl(var(--warm-beige-dark))",
+        olive: "hsl(var(--olive))",
+        charcoal: "hsl(var(--charcoal))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
