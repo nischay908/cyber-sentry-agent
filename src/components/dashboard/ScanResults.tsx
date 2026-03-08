@@ -455,9 +455,9 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
 
             {/* AI Agent Tab */}
             {activeTab === "ai-agent" && (
-              <motion.div key="ai" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col" style={{ minHeight: "400px" }}>
+              <motion.div key="ai" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col" style={{ minHeight: "500px" }}>
                 {/* Chat Messages */}
-                <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-h-[400px]">
+                <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-h-[500px]">
                   {messages.length === 0 && (
                     <div className="text-center py-8">
                       <div className="relative w-16 h-16 mx-auto mb-4">
