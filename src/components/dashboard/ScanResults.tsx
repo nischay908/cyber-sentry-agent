@@ -32,6 +32,7 @@ interface ScanResultsProps {
 const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
   const [expandedVuln, setExpandedVuln] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<ResultTab>("vulnerabilities");
+  const [showExportPopup, setShowExportPopup] = useState(false);
   const { toast } = useToast();
 
   // AI Chat state (inline)
