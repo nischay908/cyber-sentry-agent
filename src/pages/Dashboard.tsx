@@ -109,7 +109,7 @@ const Dashboard = () => {
       const result = await generateScanResults(data.mode, data.content, data.language);
       setScanResult(result);
       setScanHistory(prev => [result, ...prev]);
-      setView("results");
+      setShowVerdict(true);
     } catch {
       setView("home");
     } finally {
