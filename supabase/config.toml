@@ -1,1 +1,4 @@
 project_id = "kbungihymextqkvpwkrh"
+
+[functions.vulnerability-chat]
+verify_jwt = false
