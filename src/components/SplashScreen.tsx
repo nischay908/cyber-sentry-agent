@@ -1,46 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const MatrixRain = () => {
-  const columns = 30;
-  const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノ";
-  
-  return (
-    <div className="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
-      {Array.from({ length: columns }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute text-neon-green text-xs font-mono leading-none"
-          style={{ left: `${(i / columns) * 100}%` }}
-          initial={{ y: -200 }}
-          animate={{ y: "100vh" }}
-          transition={{
-            duration: 3 + Math.random() * 4,
-            repeat: Infinity,
-            delay: Math.random() * 3,
-            ease: "linear",
-          }}
-        >
-          {Array.from({ length: 20 }).map((_, j) => (
-            <div key={j} style={{ opacity: 1 - j * 0.05 }}>
-              {chars[Math.floor(Math.random() * chars.length)]}
-            </div>
-          ))}
-        </motion.div>
-      ))}
-    </div>
-  );
-};
+import { Shield } from "lucide-react";
 
 const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [phase, setPhase] = useState(0);
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setPhase(1), 500),
-      setTimeout(() => setPhase(2), 1500),
-      setTimeout(() => setPhase(3), 2500),
-      setTimeout(() => onComplete(), 3500),
+      setTimeout(() => setPhase(1), 400),
+      setTimeout(() => setPhase(2), 1200),
+      setTimeout(() => setPhase(3), 2200),
+      setTimeout(() => onComplete(), 3000),
     ];
     return () => timers.forEach(clearTimeout);
   }, [onComplete]);
@@ -48,103 +18,80 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-background overflow-hidden"
+        className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
+        style={{ background: "linear-gradient(135deg, hsl(230 25% 7%), hsl(270 30% 12%), hsl(230 25% 7%))" }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <MatrixRain />
-        
-        {/* Scan line */}
-        <div className="absolute inset-0 scan-overlay" />
+        {/* Animated gradient orbs */}
+        <motion.div
+          className="absolute w-[500px] h-[500px] rounded-full"
+          style={{ background: "radial-gradient(circle, hsl(var(--neon-purple) / 0.3), transparent 70%)" }}
+          animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute w-[400px] h-[400px] rounded-full"
+          style={{ background: "radial-gradient(circle, hsl(var(--neon-pink) / 0.2), transparent 70%)" }}
+          animate={{ scale: [1.2, 1, 1.2], x: [0, 50, 0], y: [0, -30, 0] }}
+          transition={{ duration: 4, repeat: Infinity }}
+        />
 
         <div className="relative z-10 text-center">
-          {/* Shield logo */}
+          {/* Logo */}
           <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            animate={phase >= 0 ? { scale: 1, rotate: 0 } : {}}
+            initial={{ scale: 0, rotate: -90 }}
+            animate={{ scale: 1, rotate: 0 }}
             transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-            className="mb-8"
+            className="mb-8 flex justify-center"
           >
-            <div className="relative mx-auto w-28 h-28">
-              <motion.svg
-                viewBox="0 0 100 100"
-                className="w-full h-full"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-              >
-                <motion.path
-                  d="M50 5 L90 25 L90 55 Q90 80 50 95 Q10 80 10 55 L10 25 Z"
-                  fill="none"
-                  stroke="hsl(350 100% 50%)"
-                  strokeWidth="2"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.5, delay: 0.3 }}
-                />
-                <motion.path
-                  d="M50 15 L80 30 L80 52 Q80 72 50 85 Q20 72 20 52 L20 30 Z"
-                  fill="hsl(350 100% 50% / 0.1)"
-                  stroke="hsl(190 100% 50%)"
-                  strokeWidth="1"
-                  initial={{ pathLength: 0, fillOpacity: 0 }}
-                  animate={{ pathLength: 1, fillOpacity: 1 }}
-                  transition={{ duration: 1.2, delay: 0.6 }}
-                />
-                {/* Crosshair */}
-                <motion.line x1="50" y1="30" x2="50" y2="70" stroke="hsl(350 100% 50%)" strokeWidth="1.5"
-                  initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1, duration: 0.5 }} />
-                <motion.line x1="30" y1="50" x2="70" y2="50" stroke="hsl(350 100% 50%)" strokeWidth="1.5"
-                  initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.2, duration: 0.5 }} />
-                <motion.circle cx="50" cy="50" r="8" fill="none" stroke="hsl(190 100% 50%)" strokeWidth="1"
-                  initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.4, duration: 0.3 }} />
-              </motion.svg>
-              
+            <div className="relative">
               <motion.div
-                className="absolute inset-0 rounded-full"
-                animate={{ boxShadow: ["0 0 20px hsl(350 100% 50% / 0.3)", "0 0 60px hsl(350 100% 50% / 0.6)", "0 0 20px hsl(350 100% 50% / 0.3)"] }}
+                className="w-24 h-24 rounded-2xl flex items-center justify-center"
+                style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-pink)))" }}
+                animate={{ boxShadow: ["0 0 30px hsl(270 95% 60% / 0.4)", "0 0 60px hsl(270 95% 60% / 0.6)", "0 0 30px hsl(270 95% 60% / 0.4)"] }}
                 transition={{ duration: 2, repeat: Infinity }}
-              />
+              >
+                <Shield className="w-12 h-12 text-primary-foreground" />
+              </motion.div>
             </div>
           </motion.div>
 
           {/* Title */}
           {phase >= 1 && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <h1 className="text-4xl md:text-5xl font-display font-bold tracking-wider">
-                <span className="text-primary neon-text">RED TEAM</span>
+              <h1 className="text-5xl md:text-6xl font-display font-bold tracking-tight">
+                <span className="gradient-text">Red Team</span>
               </h1>
-              <motion.h2
-                className="text-xl md:text-2xl font-display text-secondary mt-2 cyan-text-glow tracking-[0.3em]"
+              <motion.p
+                className="text-xl md:text-2xl font-display text-muted-foreground mt-2 tracking-wide"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                CYBER-SENTRY
-              </motion.h2>
+                Cyber-Sentry
+              </motion.p>
             </motion.div>
           )}
 
           {/* Loading bar */}
           {phase >= 2 && (
-            <motion.div
-              className="mt-8 mx-auto w-64"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <div className="h-1 bg-muted rounded-full overflow-hidden">
+            <motion.div className="mt-8 mx-auto w-64" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-primary to-secondary"
+                  className="h-full rounded-full"
+                  style={{ background: "linear-gradient(90deg, hsl(var(--neon-purple)), hsl(var(--neon-pink)), hsl(var(--neon-blue)))" }}
                   initial={{ width: "0%" }}
                   animate={{ width: "100%" }}
-                  transition={{ duration: 1 }}
+                  transition={{ duration: 0.8 }}
                 />
               </div>
               <motion.p
-                className="text-xs text-muted-foreground mt-2 font-mono"
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{ duration: 1, repeat: Infinity }}
+                className="text-sm text-muted-foreground mt-3 font-body"
+                animate={{ opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
               >
-                INITIALIZING SECURITY PROTOCOLS...
+                Initializing security protocols...
               </motion.p>
             </motion.div>
           )}
