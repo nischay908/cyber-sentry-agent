@@ -7,6 +7,9 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import PersonalizedFeed from "./pages/PersonalizedFeed";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
