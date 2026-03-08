@@ -294,9 +294,10 @@ const Dashboard = () => {
                         {/* Menu items */}
                         <div className="p-2">
                           {[
-                            { icon: User, label: "Profile", action: () => setShowProfileMenu(false) },
-                            { icon: Settings, label: "Settings", action: () => setShowProfileMenu(false) },
-                            { icon: History, label: "Scan History", action: () => setShowProfileMenu(false) },
+                            { icon: User, label: "Profile", action: () => { setShowProfileMenu(false); navigate("/profile"); } },
+                            { icon: Settings, label: "Settings", action: () => { setShowProfileMenu(false); navigate("/settings"); } },
+                            { icon: Sparkles, label: "AI Feed", action: () => { setShowProfileMenu(false); navigate("/feed"); } },
+                            { icon: History, label: "Scan History", action: () => { setShowProfileMenu(false); } },
                           ].map((item) => (
                             <button
                               key={item.label}
