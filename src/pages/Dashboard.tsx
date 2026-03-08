@@ -72,6 +72,22 @@ const Dashboard = () => {
   const [scanHistory, setScanHistory] = useState<ScanResult[]>([]);
   const [showVerdict, setShowVerdict] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [profileName, setProfileName] = useState<string | null>(null);
+
+  // Fetch display name from profiles table
+  useEffect(() => {
+    if (!user) return;
+    const fetchProfile = async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase
+        .from("profiles")
+        .select("display_name")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (data?.display_name) setProfileName(data.display_name);
+    };
+    fetchProfile();
+  }, [user]);
 
   if (loading) {
     return (
