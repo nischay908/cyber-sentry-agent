@@ -2,11 +2,10 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Shield, Bot, LogOut, Home, History, Settings } from "lucide-react";
+import { Shield, LogOut, Home, History } from "lucide-react";
 import ScanForm, { type ScanMode } from "@/components/dashboard/ScanForm";
 import ScanResults from "@/components/dashboard/ScanResults";
 import ScanProgress from "@/components/dashboard/ScanProgress";
-import AIChatPanel from "@/components/dashboard/AIChatPanel";
 import { generateScanResults, type ScanResult, type Vulnerability } from "@/lib/scanEngine";
 
 type DashboardView = "home" | "scanning" | "results";
@@ -17,8 +16,6 @@ const Dashboard = () => {
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanMode, setScanMode] = useState<ScanMode>("code");
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatVuln, setChatVuln] = useState<Vulnerability | null>(null);
   const [scanHistory, setScanHistory] = useState<ScanResult[]>([]);
 
   if (loading) {
@@ -49,11 +46,6 @@ const Dashboard = () => {
     } finally {
       setIsScanning(false);
     }
-  };
-
-  const handleAskAI = (vuln: Vulnerability) => {
-    setChatVuln(vuln);
-    setChatOpen(true);
   };
 
   const handleNewScan = () => {
@@ -87,13 +79,6 @@ const Dashboard = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => { setChatVuln(null); setChatOpen(true); }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium glass-card hover:bg-muted/50 transition-all"
-              >
-                <Bot className="w-3.5 h-3.5 text-primary" />
-                <span className="hidden sm:inline">Sentry AI</span>
-              </button>
               <Link to="/" className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
                 <Home className="w-4 h-4 text-muted-foreground" />
               </Link>
@@ -177,25 +162,11 @@ const Dashboard = () => {
 
           {view === "results" && scanResult && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <ScanResults result={scanResult} onAskAI={handleAskAI} onNewScan={handleNewScan} />
+              <ScanResults result={scanResult} onAskAI={() => {}} onNewScan={handleNewScan} />
             </motion.div>
           )}
         </div>
       </div>
-
-      {/* AI Chat Panel */}
-      <AIChatPanel isOpen={chatOpen} onClose={() => setChatOpen(false)} initialVulnerability={chatVuln} />
-
-      {/* Chat overlay */}
-      {chatOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-background/50 backdrop-blur-sm z-40 md:hidden"
-          onClick={() => setChatOpen(false)}
-        />
-      )}
     </div>
   );
 };
