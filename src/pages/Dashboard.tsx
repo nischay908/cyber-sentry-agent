@@ -224,23 +224,87 @@ const Dashboard = () => {
                 </Link>
               </motion.div>
 
-              {/* User avatar */}
-              <div className="flex items-center gap-2.5 pl-2">
-                <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-display font-bold text-primary-foreground"
-                  style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple) / 0.8), hsl(var(--neon-pink) / 0.8))" }}
-                >
-                  {userInitial}
-                </div>
+              {/* Profile avatar + dropdown */}
+              <div className="relative pl-2">
                 <motion.button
-                  onClick={signOut}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-body text-muted-foreground hover:text-destructive transition-all"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                  className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl transition-all"
                   style={{ border: "1px solid hsl(var(--border) / 0.3)" }}
-                  whileHover={{ scale: 1.05, borderColor: "hsl(0 84% 60% / 0.3)" }}
+                  whileHover={{ borderColor: "hsl(var(--neon-purple) / 0.3)" }}
                 >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Logout</span>
+                  <div
+                    className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-display font-bold text-primary-foreground"
+                    style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple) / 0.8), hsl(var(--neon-pink) / 0.8))" }}
+                  >
+                    {userInitial}
+                  </div>
+                  <span className="text-xs font-body font-medium text-foreground hidden sm:inline">{displayName}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground transition-transform ${showProfileMenu ? "rotate-180" : ""}`} />
                 </motion.button>
+
+                <AnimatePresence>
+                  {showProfileMenu && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
+                      <motion.div
+                        className="absolute right-0 top-full mt-2 w-64 rounded-2xl z-50 overflow-hidden"
+                        style={{
+                          background: "hsl(var(--card) / 0.95)",
+                          backdropFilter: "blur(20px)",
+                          border: "1px solid hsl(var(--border) / 0.4)",
+                          boxShadow: "0 20px 60px hsl(0 0% 0% / 0.4)",
+                        }}
+                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {/* Profile header */}
+                        <div className="p-4 border-b border-border/30">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="w-11 h-11 rounded-xl flex items-center justify-center text-sm font-display font-bold text-primary-foreground"
+                              style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-pink)))" }}
+                            >
+                              {userInitial}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-display font-semibold text-foreground truncate">{displayName}</p>
+                              <p className="text-xs text-muted-foreground font-body truncate">{user.email}</p>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Menu items */}
+                        <div className="p-2">
+                          {[
+                            { icon: User, label: "Profile", action: () => setShowProfileMenu(false) },
+                            { icon: Settings, label: "Settings", action: () => setShowProfileMenu(false) },
+                            { icon: History, label: "Scan History", action: () => setShowProfileMenu(false) },
+                          ].map((item) => (
+                            <button
+                              key={item.label}
+                              onClick={item.action}
+                              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-body text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-all"
+                            >
+                              <item.icon className="w-4 h-4" />
+                              {item.label}
+                            </button>
+                          ))}
+                        </div>
+                        {/* Logout */}
+                        <div className="p-2 border-t border-border/30">
+                          <button
+                            onClick={() => { setShowProfileMenu(false); signOut(); }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-body text-destructive hover:bg-destructive/10 transition-all"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            Sign Out
+                          </button>
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>
