@@ -39,6 +39,7 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [isChatLoading, setIsChatLoading] = useState(false);
+  const [autoAnalysisDone, setAutoAnalysisDone] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
 
@@ -51,6 +52,25 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
       setTimeout(() => chatInputRef.current?.focus(), 200);
     }
   }, [activeTab]);
+
+  // Auto-trigger AI analysis when results load with vulnerabilities
+  useEffect(() => {
+    if (autoAnalysisDone || result.vulnerabilities.length === 0) return;
+    setAutoAnalysisDone(true);
+    
+    // Build auto-analysis prompt
+    const vulnSummary = result.vulnerabilities
+      .map((v) => `- **${v.title}** (${v.severity.toUpperCase()}): ${v.description}${v.codeSnippet ? `\n  Code: \`${v.codeSnippet.slice(0, 100)}\`` : ""}`)
+      .join("\n");
+    
+    const autoPrompt = result.mode === "url"
+      ? `I just scanned the website and found these security issues. Analyze the threat level, tell me if this site is compromised or at risk, and give me a complete protection plan:\n\n**Scan Target:** ${result.target || "Website"}\n**Vulnerabilities Found:**\n${vulnSummary}\n\n**Summary:** ${result.summary.critical} critical, ${result.summary.high} high, ${result.summary.medium} medium, ${result.summary.low} low\n\nGive me:\n1. Is this site hacked/compromised?\n2. Immediate protection steps\n3. Full remediation plan\n4. Security hardening recommendations`
+      : `I just scanned my ${result.language || ""} code and found these vulnerabilities. Analyze them and tell me if dangerous changes have been made, and provide a complete fix plan:\n\n**Vulnerabilities Found:**\n${vulnSummary}\n\n**Summary:** ${result.summary.critical} critical, ${result.summary.high} high, ${result.summary.medium} medium, ${result.summary.low} low\n\nGive me:\n1. Are there dangerous/malicious changes?\n2. Priority fix order\n3. Code fixes for each issue\n4. Security hardening recommendations`;
+
+    // Auto-switch to AI tab and send
+    setActiveTab("ai-agent");
+    setTimeout(() => sendChatMessage(autoPrompt), 500);
+  }, [result]);
 
   const totalVulns = result.vulnerabilities.length;
 
@@ -180,10 +200,11 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
   };
 
   const quickQuestions = [
-    "Explain all the vulnerabilities found in simple terms",
+    "Give me a step-by-step remediation plan for all issues",
     "What's the most critical issue and how do I fix it?",
-    "Give me a step-by-step remediation plan",
-    "Are there any security best practices I'm missing?",
+    "How would an attacker exploit these vulnerabilities?",
+    "What security hardening should I add beyond these fixes?",
+    "Rate my overall security score and what to improve",
   ];
 
   const tabs: { id: ResultTab; label: string; icon: React.ElementType; gradient: string }[] = [
@@ -434,26 +455,33 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
 
             {/* AI Agent Tab */}
             {activeTab === "ai-agent" && (
-              <motion.div key="ai" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col" style={{ minHeight: "400px" }}>
+              <motion.div key="ai" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col" style={{ minHeight: "500px" }}>
                 {/* Chat Messages */}
-                <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-h-[400px]">
+                <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-h-[500px]">
                   {messages.length === 0 && (
-                    <div className="text-center py-6">
-                      <div className="w-14 h-14 rounded-2xl mx-auto mb-3 flex items-center justify-center" style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple) / 0.2), hsl(var(--neon-pink) / 0.2))" }}>
-                        <Sparkles className="w-7 h-7 text-primary" />
+                    <div className="text-center py-8">
+                      <div className="relative w-16 h-16 mx-auto mb-4">
+                        <div className="absolute inset-0 m-auto w-20 h-20 rounded-full" style={{ border: "1px dashed hsl(var(--neon-purple) / 0.2)" }} />
+                        <div className="relative w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple) / 0.2), hsl(var(--neon-pink) / 0.2))" }}>
+                          <Sparkles className="w-8 h-8 text-primary" />
+                        </div>
                       </div>
-                      <h3 className="font-display text-base font-bold mb-1">Ask Sentry AI</h3>
-                      <p className="text-xs text-muted-foreground font-body mb-4">
-                        Ask about the vulnerabilities found in your scan. I'll explain in simple terms and help you fix them.
+                      <h3 className="font-display text-lg font-bold mb-1 gradient-text">Sentry AI</h3>
+                      <p className="text-xs text-muted-foreground font-body mb-2">
+                        Your AI cybersecurity advisor
                       </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <p className="text-[11px] text-muted-foreground/60 font-body mb-5 max-w-sm mx-auto">
+                        Sentry AI analyzes your scan results, explains threats in plain language, provides fix code, and recommends security hardening.
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg mx-auto">
                         {quickQuestions.map((q) => (
                           <button
                             key={q}
                             onClick={() => sendChatMessage(q)}
-                            className="text-left px-3 py-2.5 rounded-xl text-xs font-body glass-card hover:bg-muted/50 transition-all text-muted-foreground hover:text-foreground"
+                            className="group text-left px-4 py-3 rounded-xl text-xs font-body transition-all text-muted-foreground hover:text-foreground"
+                            style={{ background: "hsl(var(--muted) / 0.2)", border: "1px solid hsl(var(--border) / 0.3)" }}
                           >
-                            💬 {q}
+                            <span className="text-primary mr-1.5">→</span> {q}
                           </button>
                         ))}
                       </div>
