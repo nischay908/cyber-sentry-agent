@@ -200,10 +200,11 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
   };
 
   const quickQuestions = [
-    "Explain all the vulnerabilities found in simple terms",
+    "Give me a step-by-step remediation plan for all issues",
     "What's the most critical issue and how do I fix it?",
-    "Give me a step-by-step remediation plan",
-    "Are there any security best practices I'm missing?",
+    "How would an attacker exploit these vulnerabilities?",
+    "What security hardening should I add beyond these fixes?",
+    "Rate my overall security score and what to improve",
   ];
 
   const tabs: { id: ResultTab; label: string; icon: React.ElementType; gradient: string }[] = [
