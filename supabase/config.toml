@@ -2,3 +2,6 @@ project_id = "kbungihymextqkvpwkrh"
 
 [functions.vulnerability-chat]
 verify_jwt = false
+
+[functions.personalized-feed]
+verify_jwt = false
