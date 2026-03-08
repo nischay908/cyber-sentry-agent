@@ -25,7 +25,8 @@ const LoginPage = () => {
       if (isSignup) {
         const { error } = await signUp(email, password, displayName);
         if (error) throw error;
-        toast({ title: "Account created!", description: "Check your email for confirmation." });
+        toast({ title: "Account created!", description: "Welcome to Red Team!" });
+        navigate("/dashboard");
       } else {
         const { error } = await signIn(email, password);
         if (error) throw error;
