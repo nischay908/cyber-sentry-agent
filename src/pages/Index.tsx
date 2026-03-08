@@ -405,28 +405,59 @@ const Index = () => {
                 Sign in or create an account to start scanning your code for vulnerabilities.
               </motion.p>
 
-              <motion.div className="flex flex-col sm:flex-row items-center gap-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}>
+              <motion.div className="flex flex-col sm:flex-row items-center gap-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}>
+                {/* Sign In - hero button */}
                 <motion.button
                   onClick={() => navigate("/login")}
-                  className="group flex items-center gap-3 px-12 py-4.5 rounded-2xl text-primary-foreground font-display text-base font-semibold tracking-wide"
+                  className="group relative overflow-hidden flex items-center gap-3 px-14 py-5 rounded-2xl text-primary-foreground font-display text-lg font-bold tracking-wide"
                   style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-pink)))" }}
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.06, y: -2 }}
                   whileTap={{ scale: 0.97 }}
-                  animate={{ boxShadow: ["0 0 25px hsl(270 95% 60% / 0.3), 0 0 60px hsl(270 95% 60% / 0.1)", "0 0 40px hsl(270 95% 60% / 0.5), 0 0 100px hsl(270 95% 60% / 0.2)", "0 0 25px hsl(270 95% 60% / 0.3), 0 0 60px hsl(270 95% 60% / 0.1)"] }}
+                  animate={{ boxShadow: ["0 0 30px hsl(270 95% 60% / 0.35), 0 8px 40px hsl(270 95% 60% / 0.15)", "0 0 50px hsl(270 95% 60% / 0.55), 0 8px 60px hsl(270 95% 60% / 0.25)", "0 0 30px hsl(270 95% 60% / 0.35), 0 8px 40px hsl(270 95% 60% / 0.15)"] }}
                   transition={{ boxShadow: { duration: 2, repeat: Infinity } }}
                 >
-                  <Shield className="w-5 h-5" />
-                  Sign In
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  {/* Shimmer sweep */}
+                  <motion.div
+                    className="absolute inset-0"
+                    style={{ background: "linear-gradient(105deg, transparent 40%, hsl(0 0% 100% / 0.15) 50%, transparent 60%)" }}
+                    animate={{ x: ["-100%", "200%"] }}
+                    transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.5, ease: "easeInOut" }}
+                  />
+                  <Shield className="w-5 h-5 relative z-10" />
+                  <span className="relative z-10">Sign In</span>
+                  <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1.5 transition-transform duration-300" />
                 </motion.button>
+
+                {/* Divider */}
+                <span className="text-muted-foreground/30 font-body text-sm hidden sm:block">or</span>
+
+                {/* Create Account - glass button */}
                 <motion.button
                   onClick={() => navigate("/login")}
-                  className="flex items-center gap-2 px-10 py-4.5 rounded-2xl glass-card text-foreground font-display text-base font-medium hover:bg-muted/50 transition-all"
-                  whileHover={{ scale: 1.03 }}
+                  className="group relative overflow-hidden flex items-center gap-3 px-12 py-5 rounded-2xl font-display text-lg font-bold tracking-wide text-foreground"
+                  style={{
+                    background: "hsl(var(--card) / 0.5)",
+                    backdropFilter: "blur(20px)",
+                    border: "1px solid hsl(var(--neon-purple) / 0.25)",
+                  }}
+                  whileHover={{
+                    scale: 1.05,
+                    y: -2,
+                    borderColor: "hsl(270 95% 60% / 0.5)",
+                    boxShadow: "0 0 30px hsl(270 95% 60% / 0.15), inset 0 0 20px hsl(270 95% 60% / 0.05)",
+                  }}
                   whileTap={{ scale: 0.97 }}
                 >
-                  Create Account
-                  <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                  {/* Gradient border shimmer */}
+                  <motion.div
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background: "linear-gradient(135deg, hsl(var(--neon-purple) / 0.1), hsl(var(--neon-pink) / 0.05))",
+                    }}
+                  />
+                  <Sparkles className="w-5 h-5 text-primary relative z-10" />
+                  <span className="relative z-10 gradient-text">Create Account</span>
+                  <ArrowRight className="w-5 h-5 text-primary relative z-10 group-hover:translate-x-1.5 transition-transform duration-300" />
                 </motion.button>
               </motion.div>
 
