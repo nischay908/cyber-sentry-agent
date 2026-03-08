@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import SplashScreen from "@/components/SplashScreen";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import { Shield, ArrowRight, Search, Brain, ShieldCheck, Terminal, GitBranch, Zap, Lock, Eye, Code, Cpu } from "lucide-react";
+import { Shield, ArrowRight, Search, Brain, ShieldCheck, Terminal, GitBranch, Zap, Lock, Eye, Code, Cpu, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import cyberCityImg from "@/assets/cyber-city.png";
 
