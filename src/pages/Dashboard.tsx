@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, LogOut, Home, History, Zap, Bug, AlertTriangle, Activity, Scan, Sparkles } from "lucide-react";
+import { Shield, LogOut, Home, History, Zap, Bug, AlertTriangle, Activity, Scan, Sparkles, User, Settings, Mail, ChevronDown, ShieldAlert, ShieldCheck, X } from "lucide-react";
 import ScanForm, { type ScanMode } from "@/components/dashboard/ScanForm";
 import ScanResults from "@/components/dashboard/ScanResults";
 import ScanProgress from "@/components/dashboard/ScanProgress";
