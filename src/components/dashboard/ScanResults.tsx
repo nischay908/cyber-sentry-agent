@@ -459,22 +459,29 @@ const ScanResults = ({ result, onAskAI, onNewScan }: ScanResultsProps) => {
                 {/* Chat Messages */}
                 <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-h-[400px]">
                   {messages.length === 0 && (
-                    <div className="text-center py-6">
-                      <div className="w-14 h-14 rounded-2xl mx-auto mb-3 flex items-center justify-center" style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple) / 0.2), hsl(var(--neon-pink) / 0.2))" }}>
-                        <Sparkles className="w-7 h-7 text-primary" />
+                    <div className="text-center py-8">
+                      <div className="relative w-16 h-16 mx-auto mb-4">
+                        <div className="absolute inset-0 m-auto w-20 h-20 rounded-full" style={{ border: "1px dashed hsl(var(--neon-purple) / 0.2)" }} />
+                        <div className="relative w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple) / 0.2), hsl(var(--neon-pink) / 0.2))" }}>
+                          <Sparkles className="w-8 h-8 text-primary" />
+                        </div>
                       </div>
-                      <h3 className="font-display text-base font-bold mb-1">Ask Sentry AI</h3>
-                      <p className="text-xs text-muted-foreground font-body mb-4">
-                        Ask about the vulnerabilities found in your scan. I'll explain in simple terms and help you fix them.
+                      <h3 className="font-display text-lg font-bold mb-1 gradient-text">Sentry AI</h3>
+                      <p className="text-xs text-muted-foreground font-body mb-2">
+                        Your AI cybersecurity advisor
                       </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <p className="text-[11px] text-muted-foreground/60 font-body mb-5 max-w-sm mx-auto">
+                        Sentry AI analyzes your scan results, explains threats in plain language, provides fix code, and recommends security hardening.
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg mx-auto">
                         {quickQuestions.map((q) => (
                           <button
                             key={q}
                             onClick={() => sendChatMessage(q)}
-                            className="text-left px-3 py-2.5 rounded-xl text-xs font-body glass-card hover:bg-muted/50 transition-all text-muted-foreground hover:text-foreground"
+                            className="group text-left px-4 py-3 rounded-xl text-xs font-body transition-all text-muted-foreground hover:text-foreground"
+                            style={{ background: "hsl(var(--muted) / 0.2)", border: "1px solid hsl(var(--border) / 0.3)" }}
                           >
-                            💬 {q}
+                            <span className="text-primary mr-1.5">→</span> {q}
                           </button>
                         ))}
                       </div>
