@@ -317,6 +317,26 @@ const ScanForm = ({ onStartScan, isScanning }: ScanFormProps) => {
             <p className="text-xs text-muted-foreground mt-2 font-body">
               We'll scan the website for common vulnerabilities like XSS, CSRF, SQL injection, and more.
             </p>
+            <div className="mt-3">
+              <p className="text-[11px] text-muted-foreground/60 font-body mb-2">Try an example:</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "https://testphp.vulnweb.com",
+                  "https://juice-shop.herokuapp.com",
+                  "https://demo.owasp-juice.shop",
+                  "http://testfire.net",
+                ].map((exUrl) => (
+                  <button
+                    key={exUrl}
+                    type="button"
+                    onClick={() => setUrl(exUrl)}
+                    className="px-3 py-1.5 rounded-lg text-[11px] font-mono glass-card hover:bg-accent/10 hover:text-accent hover:border-accent/30 transition-all border border-border/30"
+                  >
+                    {exUrl.replace(/^https?:\/\//, "")}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
