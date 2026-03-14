@@ -12,9 +12,30 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [forgotMode, setForgotMode] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) { toast({ title: "Error", description: "Please enter your email", variant: "destructive" }); return; }
+    setLoading(true);
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      setResetSent(true);
+      toast({ title: "Reset email sent!", description: "Check your inbox for the password reset link." });
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,6 +237,58 @@ const LoginPage = () => {
           </motion.div>
 
           {/* Form */}
+          {forgotMode ? (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+              {resetSent ? (
+                <div className="text-center py-6">
+                  <div className="w-14 h-14 rounded-2xl bg-neon-green/20 flex items-center justify-center mx-auto mb-4">
+                    <Mail className="w-7 h-7 text-neon-green" />
+                  </div>
+                  <p className="text-sm font-body text-foreground font-medium mb-1">Check your email</p>
+                  <p className="text-xs text-muted-foreground font-body">We sent a reset link to <span className="text-primary">{email}</span></p>
+                  <button onClick={() => { setForgotMode(false); setResetSent(false); }} className="mt-4 text-xs font-body text-primary hover:text-primary/80 transition-colors">
+                    ← Back to sign in
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleForgotPassword} className="space-y-4">
+                  <p className="text-xs text-muted-foreground font-body">Enter your email and we'll send you a link to reset your password.</p>
+                  <div>
+                    <label className="block text-xs font-body text-muted-foreground mb-1.5 font-medium">Email</label>
+                    <div className="relative group">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="user@gmail.com"
+                        required
+                        className="w-full pl-11 pr-4 py-3 rounded-xl text-sm font-body text-foreground placeholder:text-muted-foreground/40 focus:outline-none transition-all duration-300"
+                        style={{ background: "hsl(var(--muted) / 0.2)", border: "1px solid hsl(var(--border) / 0.4)" }}
+                        onFocus={(e) => { e.target.style.borderColor = "hsl(270 95% 60% / 0.5)"; e.target.style.boxShadow = "0 0 15px hsl(270 95% 60% / 0.1)"; }}
+                        onBlur={(e) => { e.target.style.borderColor = "hsl(var(--border) / 0.4)"; e.target.style.boxShadow = "none"; }}
+                      />
+                    </div>
+                  </div>
+                  <motion.button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-2.5 py-3.5 text-primary-foreground font-display text-sm font-semibold tracking-wide rounded-xl transition-all duration-300 disabled:opacity-50"
+                    style={{ background: "linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-pink)))", boxShadow: "0 0 25px hsl(270 95% 60% / 0.25)" }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {loading ? (
+                      <motion.div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full" animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} />
+                    ) : "Send Reset Link"}
+                  </motion.button>
+                  <button type="button" onClick={() => setForgotMode(false)} className="w-full text-center text-xs font-body text-muted-foreground hover:text-foreground transition-colors mt-2">
+                    ← Back to sign in
+                  </button>
+                </form>
+              )}
+            </motion.div>
+          ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <AnimatePresence mode="wait">
               {isSignup && (
@@ -290,7 +363,7 @@ const LoginPage = () => {
                   Password
                 </label>
                 {!isSignup && (
-                  <button type="button" className="text-[11px] font-body text-primary hover:text-primary/80 transition-colors">
+                  <button type="button" onClick={() => setForgotMode(true)} className="text-[11px] font-body text-primary hover:text-primary/80 transition-colors">
                     Forgot Password?
                   </button>
                 )}
@@ -353,6 +426,7 @@ const LoginPage = () => {
               )}
             </motion.button>
           </form>
+          )}
 
           {/* Terms */}
           <p className="mt-5 text-center text-[11px] text-muted-foreground/50 font-body">
