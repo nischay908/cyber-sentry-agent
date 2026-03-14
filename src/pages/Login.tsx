@@ -311,7 +311,7 @@ const LoginPage = () => {
                   Password
                 </label>
                 {!isSignup && (
-                  <button type="button" className="text-[11px] font-body text-primary hover:text-primary/80 transition-colors">
+                  <button type="button" onClick={() => setForgotMode(true)} className="text-[11px] font-body text-primary hover:text-primary/80 transition-colors">
                     Forgot Password?
                   </button>
                 )}

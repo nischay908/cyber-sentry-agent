@@ -297,7 +297,7 @@ const Dashboard = () => {
                             { icon: User, label: "Profile", action: () => { setShowProfileMenu(false); navigate("/profile"); } },
                             { icon: Settings, label: "Settings", action: () => { setShowProfileMenu(false); navigate("/settings"); } },
                             { icon: Sparkles, label: "AI Feed", action: () => { setShowProfileMenu(false); navigate("/feed"); } },
-                            { icon: History, label: "Scan History", action: () => { setShowProfileMenu(false); } },
+                            { icon: History, label: "Scan History", action: () => { setShowProfileMenu(false); setView("home"); setTimeout(() => document.getElementById("scan-history")?.scrollIntoView({ behavior: "smooth" }), 100); } },
                           ].map((item) => (
                             <button
                               key={item.label}
