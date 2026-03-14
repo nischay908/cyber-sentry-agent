@@ -426,6 +426,7 @@ const LoginPage = () => {
               )}
             </motion.button>
           </form>
+          )}
 
           {/* Terms */}
           <p className="mt-5 text-center text-[11px] text-muted-foreground/50 font-body">
